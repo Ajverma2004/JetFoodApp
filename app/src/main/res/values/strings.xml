@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">JetFoodApp</string>
+    <string name="skip">Skip</string>
+    <string name="welcome">Welcome to</string>
+    <string name="jetfood">JetFood</string>
+    <string name="description">Your favourite foods delivered \nfast at your home</string>
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+</resources>

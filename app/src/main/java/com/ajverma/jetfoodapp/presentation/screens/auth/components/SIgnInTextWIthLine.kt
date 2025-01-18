@@ -1,4 +1,4 @@
-package com.ajverma.jetfoodapp.presentation.utils.components
+package com.ajverma.jetfoodapp.presentation.screens.auth.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,8 +14,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SignInWithText(
+fun SignInTextWithLine(
     modifier: Modifier = Modifier,
+    textColor: Color = Color.White,
     text: String,
     lineWidth: Dp
 ) {
@@ -24,8 +25,9 @@ fun SignInWithText(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Divider(Modifier.width(lineWidth))
-        Text(text,
-            color = Color.White,
+        Text(
+            text,
+            color = textColor,
             modifier = Modifier.padding(horizontal = 8.dp)
         )
         Divider(Modifier.width(lineWidth))

@@ -1,4 +1,4 @@
-package com.ajverma.jetfoodapp.presentation.utils.components
+package com.ajverma.jetfoodapp.presentation.screens.auth.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -17,23 +17,27 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AlreadyHaveAnAccountText(
     modifier: Modifier = Modifier,
-    text: String,
+    initialText: String = "Already have an account? ",
+    initialTextColor: Color = Color.White,
+    trailingText: String,
+    trailingTextColor: Color = Color.White,
+    textDecoration: TextDecoration? = null,
     onClick: () -> Unit,
 ) {
     Text(
         text = buildAnnotatedString {
             append("Already have an account? ")
-            pushStringAnnotation(tag = text, annotation = text)
+            pushStringAnnotation(tag = trailingText, annotation = trailingText)
             withStyle(style = SpanStyle(
-                color = Color.White,
-                textDecoration = TextDecoration.Underline
+                color = trailingTextColor,
+                textDecoration = textDecoration
             )
             ) {
-                append(text)
+                append(trailingText)
             }
             pop()
         },
-        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp, color = Color.White),
+        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp, color = initialTextColor),
         modifier = Modifier
             .padding(bottom = 16.dp)
             .clickable {

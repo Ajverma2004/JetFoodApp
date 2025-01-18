@@ -1,4 +1,4 @@
-package com.ajverma.jetfoodapp.presentation.utils.components
+package com.ajverma.jetfoodapp.presentation.screens.auth.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.sp
 fun SignInOptionButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    elevation: Dp = 0.dp,
     image: Int,
     text: Int
 ) {
@@ -25,6 +27,10 @@ fun SignInOptionButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.White
         ),
+        elevation = ButtonDefaults.buttonElevation(
+            defaultElevation = elevation,
+
+        )
     ) {
         Image(
             painter = painterResource(image),

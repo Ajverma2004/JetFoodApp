@@ -28,14 +28,15 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ajverma.jetfoodapp.R
-import com.ajverma.jetfoodapp.presentation.utils.components.AlreadyHaveAnAccountText
-import com.ajverma.jetfoodapp.presentation.utils.components.SignInOptionButton
-import com.ajverma.jetfoodapp.presentation.utils.components.SignInWithText
+import com.ajverma.jetfoodapp.presentation.screens.auth.components.AlreadyHaveAnAccountText
+import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInOptionButton
+import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInTextWithLine
 import com.ajverma.jetfoodapp.ui.theme.Orange
 
 @Composable
@@ -140,7 +141,7 @@ fun AuthOptionScreen(
                    verticalArrangement = Arrangement.Top
                ) {
                    //sign in with line
-                   SignInWithText(
+                   SignInTextWithLine(
                        text = "Sign In With",
                        lineWidth = 80.dp
                    )
@@ -159,6 +160,7 @@ fun AuthOptionScreen(
                            text = R.string.google
                        )
 
+                       //facebook button
                        SignInOptionButton(
                            onClick = {},
                            image = R.drawable.ic_facebook,
@@ -182,7 +184,7 @@ fun AuthOptionScreen(
 
                        ) {
                        Text(
-                           "Sign In With Email and phone",
+                           "Start with email",
                            color = Color.White,
                            fontSize = 16.sp,
                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
@@ -192,8 +194,9 @@ fun AuthOptionScreen(
 
                    // already have an account text
                    AlreadyHaveAnAccountText(
-                       text = "Login",
-                       onClick = { /*TODO*/ }
+                       trailingText = "Login",
+                       textDecoration = TextDecoration.Underline,
+                       onClick = {}
                    ) 
                }
             }

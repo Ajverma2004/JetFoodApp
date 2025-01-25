@@ -16,6 +16,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,70 +42,62 @@ import com.ajverma.jetfoodapp.ui.theme.Orange
 fun SignUpScreen(
     modifier: Modifier = Modifier
 ) {
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
     Box(
-        modifier = modifier.fillMaxSize()
-            .background(Color.White)
-    ){
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White) // Ensure the background is solid white
+    ) {
         Image(
             painter = painterResource(R.drawable.ic_auth),
             contentDescription = null,
-            modifier = modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
+            modifier = Modifier.fillMaxSize(), // Ensure the image fills the entire screen
+            contentScale = ContentScale.Crop // Use Crop for full coverage
         )
 
         Column(
-            modifier = Modifier.fillMaxSize()
-                .padding(16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(modifier = Modifier.weight(1f))
+            Spacer(Modifier.weight(1f)) // Push content down evenly
 
-            //title
+            // Title
             Text(
-                stringResource(R.string.sign_up),
+                text = stringResource(R.string.sign_up),
                 color = Color.Black,
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.fillMaxWidth()
             )
 
-
             Spacer(Modifier.height(46.dp))
 
             // Full name text field
             JetFoodTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text(
-                    stringResource(R.string.full_name),
-                    color = Color.Gray
-                ) },
+                value = name,
+                onValueChange = { name = it },
+                label = { Text(stringResource(R.string.full_name), color = Color.Gray) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-
-            // email text field
+            // Email text field
             JetFoodTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text(
-                    stringResource(R.string.email),
-                    color = Color.Gray
-                ) },
+                value = email,
+                onValueChange = { email = it },
+                label = { Text(stringResource(R.string.email), color = Color.Gray) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-
-
-
-            //password text field
+            // Password text field
             JetFoodTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text(
-                    stringResource(R.string.password),
-                    color = Color.Gray
-                ) },
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(stringResource(R.string.password), color = Color.Gray) },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
                 trailingIcon = {
@@ -115,37 +111,31 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(26.dp))
 
+            // Sign up button
             Button(
-                modifier = Modifier
-                    .size(250.dp, 70.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Orange
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 10.dp
-                ),
-                onClick = {}
+                onClick = {},
+                modifier = Modifier.size(250.dp, 70.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Orange),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp)
             ) {
                 Text(
-                    "SIGN UP" ,
+                    text = "SIGN UP",
                     color = Color.White,
                     fontSize = 20.sp
                 )
             }
-            
+
             Spacer(Modifier.height(36.dp))
 
-            //sign in buttons
+            // Sign-in options
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 20.dp)
-                ,
+                    .padding(bottom = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-
-                // already have an account text
+                // Already have an account text
                 AlreadyHaveAnAccountText(
                     trailingText = "Login",
                     initialTextColor = Color.Black,
@@ -155,21 +145,21 @@ fun SignUpScreen(
 
                 Spacer(Modifier.height(26.dp))
 
-                //sign in with line
+                // Sign in with line
                 SignInTextWithLine(
                     text = "Sign In With",
                     textColor = Color.Black,
                     lineWidth = 80.dp
                 )
 
-                // google and facebook buttons
+                // Google and Facebook buttons
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(top = 16.dp),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    //google button
                     SignInOptionButton(
                         onClick = {},
                         elevation = 7.dp,
@@ -177,7 +167,6 @@ fun SignUpScreen(
                         text = R.string.google
                     )
 
-                    //facebook button
                     SignInOptionButton(
                         onClick = {},
                         elevation = 7.dp,
@@ -186,10 +175,8 @@ fun SignUpScreen(
                     )
                 }
             }
-
         }
     }
-
 }
 
 

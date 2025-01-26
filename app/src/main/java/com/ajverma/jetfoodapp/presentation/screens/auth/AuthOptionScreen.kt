@@ -33,15 +33,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.ajverma.jetfoodapp.R
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.AlreadyHaveAnAccountText
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInOptionButton
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInTextWithLine
+import com.ajverma.jetfoodapp.presentation.screens.navigation.Login
+import com.ajverma.jetfoodapp.presentation.screens.navigation.SignUp
 import com.ajverma.jetfoodapp.ui.theme.Orange
 
 @Composable
 fun AuthOptionScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController
 ) {
     var imageSize by remember {
         mutableStateOf(IntSize.Zero)
@@ -173,7 +177,9 @@ fun AuthOptionScreen(
                    //sign in with email or button
 
                    Button(
-                       onClick = {},
+                       onClick = {
+                           navController.navigate(SignUp)
+                       },
                        colors = ButtonDefaults.buttonColors(
                            containerColor = Color.White.copy(alpha = 0.2f)
                        ),
@@ -196,16 +202,12 @@ fun AuthOptionScreen(
                    AlreadyHaveAnAccountText(
                        trailingText = "Login",
                        textDecoration = TextDecoration.Underline,
-                       onClick = {}
+                       onClick = {
+                           navController.navigate(Login)
+                       }
                    ) 
                }
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun AuthOptionScreenPreview() {
-    AuthOptionScreen()
 }

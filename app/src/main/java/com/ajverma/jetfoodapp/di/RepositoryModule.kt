@@ -1,10 +1,9 @@
-package com.ajverma.jetfoodapp.data.respository
+package com.ajverma.jetfoodapp.di
 
-import com.ajverma.jetfoodapp.data.network.FoodApi
+import com.ajverma.jetfoodapp.data.respository.AuthRepositoryImpl
 import com.ajverma.jetfoodapp.domain.repositories.AuthRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton

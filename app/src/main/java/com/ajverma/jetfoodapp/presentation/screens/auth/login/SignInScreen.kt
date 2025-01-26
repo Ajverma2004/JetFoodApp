@@ -1,6 +1,5 @@
-package com.ajverma.jetfoodapp.presentation.screens.auth.signup
+package com.ajverma.jetfoodapp.presentation.screens.auth.login
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -40,31 +39,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.jetfoodapp.R
-import com.ajverma.jetfoodapp.presentation.screens.auth.AuthOptionScreen
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.AlreadyHaveAnAccountText
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInOptionButton
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInTextWithLine
 import com.ajverma.jetfoodapp.presentation.screens.navigation.AuthOption
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Home
-import com.ajverma.jetfoodapp.presentation.screens.navigation.Login
+import com.ajverma.jetfoodapp.presentation.screens.navigation.SignUp
 import com.ajverma.jetfoodapp.presentation.utils.components.JetFoodTextField
 import com.ajverma.jetfoodapp.ui.theme.Orange
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun SignUpScreen(
+fun SignInScreen(
     modifier: Modifier = Modifier,
-    viewModel: SignUpViewModel = hiltViewModel(),
+    viewModel: SignInViewModel = hiltViewModel(),
     navController: NavController
 ) {
-    val name = viewModel.name.collectAsStateWithLifecycle()
     val email = viewModel.email.collectAsStateWithLifecycle()
     val password = viewModel.password.collectAsStateWithLifecycle()
     var errorMessage by remember { mutableStateOf<String?>("") }
@@ -72,11 +68,11 @@ fun SignUpScreen(
 
     val uiState = viewModel.uiState.collectAsState()
     when(uiState.value){
-        is SignUpViewModel.SignupEvent.Error -> {
+        is SignInViewModel.SignInEvent.Error -> {
             isLoading = false
-            errorMessage = (uiState.value as SignUpViewModel.SignupEvent.Error).message
+            errorMessage = (uiState.value as SignInViewModel.SignInEvent.Error).message
         }
-        is SignUpViewModel.SignupEvent.Loading -> {
+        is SignInViewModel.SignInEvent.Loading -> {
             isLoading = true
             errorMessage = null
         }
@@ -89,7 +85,7 @@ fun SignUpScreen(
     LaunchedEffect(true) {
         viewModel.navigationEvent.collectLatest { event ->
             when(event){
-                is SignUpViewModel.SignupNavigationEvent.NavigateToHome -> {
+                is SignInViewModel.SignInNavigationEvent.NavigateToHome -> {
                     navController.navigate(Home){
                         popUpTo(AuthOption) {
                             inclusive = true
@@ -104,13 +100,13 @@ fun SignUpScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White) // Ensure the background is solid white
+            .background(Color.White)
     ) {
         Image(
             painter = painterResource(R.drawable.ic_auth),
             contentDescription = null,
-            modifier = Modifier.fillMaxSize(), // Ensure the image fills the entire screen
-            contentScale = ContentScale.Crop // Use Crop for full coverage
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
 
         Column(
@@ -123,7 +119,7 @@ fun SignUpScreen(
 
             // Title
             Text(
-                text = stringResource(R.string.sign_up),
+                text = stringResource(R.string.login),
                 color = Color.Black,
                 fontSize = 35.sp,
                 fontWeight = FontWeight.Bold,
@@ -132,15 +128,6 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(46.dp))
 
-            // Full name text field
-            JetFoodTextField(
-                value = name.value,
-                onValueChange = {
-                    viewModel.onNameChange(it)
-                },
-                label = { Text(stringResource(R.string.full_name), color = Color.Gray) },
-                modifier = Modifier.fillMaxWidth()
-            )
 
             // Email text field
             JetFoodTextField(
@@ -185,7 +172,7 @@ fun SignUpScreen(
 
             // Sign up button
             Button(
-                onClick = viewModel::onSignUpClick,
+                onClick = viewModel::onSignInClick,
                 modifier = Modifier.size(250.dp, 70.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Orange),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp)
@@ -204,7 +191,7 @@ fun SignUpScreen(
                             )
                         } else {
                             Text(
-                                text = "SIGN UP",
+                                text = "LOGIN",
                                 color = Color.White,
                                 fontSize = 20.sp
                             )
@@ -225,11 +212,12 @@ fun SignUpScreen(
             ) {
                 // Already have an account text
                 AlreadyHaveAnAccountText(
-                    trailingText = "Login",
+                    initialText = "Don't have an account? ",
+                    trailingText = "Sign Up",
                     initialTextColor = Color.Black,
                     trailingTextColor = Orange,
                     onClick = {
-                        navController.navigate(Login)
+                        navController.navigate(SignUp)
                     }
                 )
 
@@ -237,7 +225,7 @@ fun SignUpScreen(
 
                 // Sign in with line
                 SignInTextWithLine(
-                    text = "Sign Up With",
+                    text = "Sign In With",
                     textColor = Color.Black,
                     lineWidth = 80.dp
                 )
@@ -251,7 +239,9 @@ fun SignUpScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SignInOptionButton(
-                        onClick = {},
+                        onClick = {
+                            viewModel.onGoogleSignInClick(context)
+                        },
                         elevation = 7.dp,
                         image = R.drawable.ic_google,
                         text = R.string.google

@@ -26,7 +26,7 @@ fun AlreadyHaveAnAccountText(
 ) {
     Text(
         text = buildAnnotatedString {
-            append("Already have an account? ")
+            append(initialText)
             pushStringAnnotation(tag = trailingText, annotation = trailingText)
             withStyle(style = SpanStyle(
                 color = trailingTextColor,

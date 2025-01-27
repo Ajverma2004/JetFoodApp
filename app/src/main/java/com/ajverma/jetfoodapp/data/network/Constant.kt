@@ -1,5 +1,5 @@
 package com.ajverma.jetfoodapp.data.network
 
 object Constant {
-    const val googleServiceClientId = "793845704062-18c3b8kkq3mn8odp4j6e2bq53cpgimbr.apps.googleusercontent.com"
+    const val googleServiceClientId = "793845704062-ml2qu0qlqee21as5qtr30g4cjhsg9oap.apps.googleusercontent.com"
 }

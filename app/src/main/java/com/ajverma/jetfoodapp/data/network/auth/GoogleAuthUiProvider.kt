@@ -48,54 +48,35 @@ class GoogleAuthUiProvider {
     private fun handleCredentials(creds: Credential): GoogleAccount {
         Log.d("GoogleAuthUiProvider", "Handling credentials: $creds")
 
-        if (creds is CustomCredential) {
-            Log.d("GoogleAuthUiProvider", "Credential type: CustomCredential")
-
-            if (creds.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                Log.d("GoogleAuthUiProvider", "Credential subtype: GoogleIdTokenCredential")
-
-                // Extract data from credential
-                val idToken = creds.data["idToken"]?.toString()
-                val displayName = creds.data["displayName"]?.toString()
-                val profileImageUrl = creds.data["profilePictureUri"]?.toString()
-
-                // Log extracted details
-                Log.d("GoogleAuthUiProvider", "Extracted ID Token: $idToken")
-                Log.d("GoogleAuthUiProvider", "Extracted Display Name: $displayName")
-                Log.d("GoogleAuthUiProvider", "Extracted Profile Picture URL: $profileImageUrl")
-
-                if (idToken != null) {
-                    return GoogleAccount(
-                        token = idToken,
-                        displayName = displayName ?: "",
-                        profileImageUrl = profileImageUrl ?: ""
-                    )
-                } else {
-                    Log.e("GoogleAuthUiProvider", "ID Token is null or missing")
-                    throw IllegalStateException("Google ID token is missing")
-                }
-            } else {
-                Log.e("GoogleAuthUiProvider", "Unexpected credential type: ${creds.type}")
-                throw IllegalStateException("Invalid credential type: Expected Google ID token credential")
+        if (creds is CustomCredential && creds.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+            try {
+                // Parse the credential
+                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(creds.data)
+                
+                // Extract data using the proper methods
+                return GoogleAccount(
+                    token = googleIdTokenCredential.idToken ?: throw IllegalStateException("ID Token is null"),
+                    displayName = googleIdTokenCredential.displayName ?: "",
+                    profileImageUrl = googleIdTokenCredential.profilePictureUri?.toString() ?: ""
+                )
+            } catch (e: Exception) {
+                Log.e("GoogleAuthUiProvider", "Error parsing Google credential", e)
+                throw IllegalStateException("Failed to parse Google credential: ${e.message}")
             }
         } else {
-            Log.e("GoogleAuthUiProvider", "Invalid credential type: Not CustomCredential")
-            throw IllegalStateException("Invalid credential type")
+            Log.e("GoogleAuthUiProvider", "Invalid credential type: ${creds::class.java.simpleName}")
+            throw IllegalStateException("Invalid credential type: Expected Google ID token credential")
         }
     }
 
     private fun getCredentialRequest(): GetCredentialRequest {
         Log.d("GoogleAuthUiProvider", "Building GetCredentialRequest with GoogleServiceClientId: $googleServiceClientId")
-
-        val request = GetCredentialRequest.Builder()
+        
+        return GetCredentialRequest.Builder()
             .addCredentialOption(
-                GetSignInWithGoogleOption
-                    .Builder(googleServiceClientId)
+                GetSignInWithGoogleOption.Builder(googleServiceClientId)
                     .build()
             )
             .build()
-
-        Log.d("GoogleAuthUiProvider", "Built GetCredentialRequest: $request")
-        return request
     }
 }

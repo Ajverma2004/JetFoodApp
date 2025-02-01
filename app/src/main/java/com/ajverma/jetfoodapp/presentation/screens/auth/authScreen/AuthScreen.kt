@@ -1,5 +1,6 @@
 package com.ajverma.jetfoodapp.presentation.screens.auth
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -33,11 +35,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ajverma.jetfoodapp.R
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.AlreadyHaveAnAccountText
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInOptionButton
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInTextWithLine
+import com.ajverma.jetfoodapp.presentation.screens.auth.login.SignInViewModel
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Login
 import com.ajverma.jetfoodapp.presentation.screens.navigation.SignUp
 import com.ajverma.jetfoodapp.ui.theme.Orange
@@ -45,8 +49,12 @@ import com.ajverma.jetfoodapp.ui.theme.Orange
 @Composable
 fun AuthOptionScreen(
     modifier: Modifier = Modifier,
+    viewModel: SignInViewModel = hiltViewModel(),
     navController: NavController
 ) {
+
+    val context = LocalContext.current
+
     var imageSize by remember {
         mutableStateOf(IntSize.Zero)
     }
@@ -159,14 +167,18 @@ fun AuthOptionScreen(
                    ) {
                        //google button
                        SignInOptionButton(
-                           onClick = {},
+                           onClick = {
+                               viewModel.onGoogleClick(context as ComponentActivity)
+                           },
                            image = R.drawable.ic_google,
                            text = R.string.google
                        )
 
                        //facebook button
                        SignInOptionButton(
-                           onClick = {},
+                           onClick = {
+                               viewModel.onFacebookClick(context as ComponentActivity)
+                           },
                            image = R.drawable.ic_facebook,
                            text = R.string.facebook
                        )

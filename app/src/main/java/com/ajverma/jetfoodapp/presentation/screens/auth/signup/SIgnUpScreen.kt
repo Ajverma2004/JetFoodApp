@@ -1,6 +1,6 @@
 package com.ajverma.jetfoodapp.presentation.screens.auth.signup
 
-import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -23,13 +23,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,30 +44,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.jetfoodapp.R
-import com.ajverma.jetfoodapp.presentation.screens.auth.AuthOptionScreen
+import com.ajverma.jetfoodapp.presentation.screens.auth.BaseAuthViewModel
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.AlreadyHaveAnAccountText
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInOptionButton
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInTextWithLine
 import com.ajverma.jetfoodapp.presentation.screens.navigation.AuthOption
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Home
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Login
+import com.ajverma.jetfoodapp.presentation.utils.components.BasicDialog
 import com.ajverma.jetfoodapp.presentation.utils.components.JetFoodTextField
 import com.ajverma.jetfoodapp.ui.theme.Orange
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     viewModel: SignUpViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showDialog by remember { mutableStateOf(false) }
+
+
     val name = viewModel.name.collectAsStateWithLifecycle()
     val email = viewModel.email.collectAsStateWithLifecycle()
     val password = viewModel.password.collectAsStateWithLifecycle()
@@ -96,7 +107,13 @@ fun SignUpScreen(
                         }
                     }
                 }
-                else -> {}
+                is SignUpViewModel.SignupNavigationEvent.NavigateToLogin -> {
+                    navController.navigate(Login)
+                }
+
+                is SignUpViewModel.SignupNavigationEvent.ShowDialog -> {
+                    showDialog = true
+                }
             }
         }
     }
@@ -172,16 +189,6 @@ fun SignUpScreen(
 
             Spacer(Modifier.height(26.dp))
 
-            //error message
-            if (errorMessage != null) {
-                Text(
-                    text = errorMessage!!,
-                    color = Color.Red,
-                    modifier = Modifier.fillMaxWidth()
-                            .padding(bottom = 16.dp)
-                        .align(Alignment.CenterHorizontally)
-                )
-            }
 
             // Sign up button
             Button(
@@ -229,7 +236,7 @@ fun SignUpScreen(
                     initialTextColor = Color.Black,
                     trailingTextColor = Orange,
                     onClick = {
-                        navController.navigate(Login)
+                        viewModel.onLoginClick()
                     }
                 )
 
@@ -251,19 +258,41 @@ fun SignUpScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     SignInOptionButton(
-                        onClick = {},
+                        onClick = {
+                            viewModel.onGoogleClick(context as ComponentActivity)
+                        },
                         elevation = 7.dp,
                         image = R.drawable.ic_google,
                         text = R.string.google
                     )
 
                     SignInOptionButton(
-                        onClick = {},
+                        onClick = {
+                            viewModel.onFacebookClick(context as ComponentActivity)
+                        },
                         elevation = 7.dp,
                         image = R.drawable.ic_facebook,
                         text = R.string.facebook
                     )
                 }
+            }
+        }
+
+        if (showDialog){
+            ModalBottomSheet(
+                onDismissRequest = { showDialog = false },
+                sheetState = sheetState
+            ) {
+                BasicDialog(
+                    title = viewModel.error,
+                    description = errorMessage.toString(),
+                    onClick = {
+                        scope.launch {
+                            sheetState.hide()
+                            showDialog = false
+                        }
+                    }
+                )
             }
         }
     }

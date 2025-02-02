@@ -1,4 +1,4 @@
-package com.ajverma.jetfoodapp.presentation.screens.auth
+package com.ajverma.jetfoodapp.presentation.screens.auth.authScreen
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.BorderStroke
@@ -13,11 +13,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,19 +46,70 @@ import com.ajverma.jetfoodapp.R
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.AlreadyHaveAnAccountText
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInOptionButton
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInTextWithLine
-import com.ajverma.jetfoodapp.presentation.screens.auth.login.SignInViewModel
+import com.ajverma.jetfoodapp.presentation.screens.navigation.AuthOption
+import com.ajverma.jetfoodapp.presentation.screens.navigation.Home
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Login
 import com.ajverma.jetfoodapp.presentation.screens.navigation.SignUp
+import com.ajverma.jetfoodapp.presentation.utils.components.BasicDialog
 import com.ajverma.jetfoodapp.ui.theme.Orange
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthOptionScreen(
+fun AuthScreen(
     modifier: Modifier = Modifier,
-    viewModel: SignInViewModel = hiltViewModel(),
+    viewModel: AuthViewModel = hiltViewModel(),
     navController: NavController
 ) {
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+    var showDialog by remember { mutableStateOf(false) }
+
 
     val context = LocalContext.current
+
+    var errorMessage by remember { mutableStateOf<String?>("") }
+    var isLoading by remember { mutableStateOf(false) }
+
+    val uiState = viewModel.uiState.collectAsState()
+    when(uiState.value){
+        is AuthViewModel.AuthEvent.Error -> {
+            isLoading = false
+            errorMessage = (uiState.value as AuthViewModel.AuthEvent.Error).message
+        }
+        is AuthViewModel.AuthEvent.Loading -> {
+            isLoading = true
+            errorMessage = null
+        }
+        else -> {
+            isLoading = false
+            errorMessage = null
+        }
+    }
+
+    LaunchedEffect(true) {
+        viewModel.navigationEvent.collectLatest { event ->
+            when(event){
+                is AuthViewModel.AuthNavigationEvent.NavigateToHome -> {
+                    navController.navigate(Home){
+                        popUpTo(AuthOption) {
+                            inclusive = true
+                        }
+                    }
+                }
+
+                is AuthViewModel.AuthNavigationEvent.NavigateToLogin -> {
+                    navController.navigate(Login)
+                }
+
+                is AuthViewModel.AuthNavigationEvent.ShowDialog -> {
+                    showDialog = true
+                }
+            }
+        }
+    }
+
 
     var imageSize by remember {
         mutableStateOf(IntSize.Zero)
@@ -135,6 +191,8 @@ fun AuthOptionScreen(
             )
         }
 
+
+
         Box(
             modifier = Modifier.fillMaxSize()
         ){
@@ -157,6 +215,7 @@ fun AuthOptionScreen(
                        text = "Sign In With",
                        lineWidth = 80.dp
                    )
+
 
                    // google and facebook buttons
                    Row(
@@ -219,6 +278,24 @@ fun AuthOptionScreen(
                        }
                    ) 
                }
+            }
+        }
+
+        if (showDialog){
+            ModalBottomSheet(
+                onDismissRequest = { showDialog = false },
+                sheetState = sheetState
+            ) {
+                BasicDialog(
+                    title = viewModel.error,
+                    description = errorMessage.toString(),
+                    onClick = {
+                        scope.launch {
+                            sheetState.hide()
+                            showDialog = false
+                        }
+                    }
+                )
             }
         }
     }

@@ -7,8 +7,7 @@ import com.ajverma.jetfoodapp.data.network.models.authModels.OAuthRequest
 import com.ajverma.jetfoodapp.data.network.models.authModels.SignInRequest
 import com.ajverma.jetfoodapp.data.network.models.authModels.SignUpRequest
 import com.ajverma.jetfoodapp.domain.repositories.AuthRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -18,8 +17,7 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
 
     override suspend fun signUp(request: SignUpRequest): Resource<AuthResponse> {
-        return withContext(Dispatchers.IO) {
-            try {
+        return try {
                 // Call the API
                  val response = foodApi.signUp(request)
                 // Return a success result
@@ -51,11 +49,9 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             }
         }
-    }
 
     override suspend fun signIn(request: SignInRequest): Resource<AuthResponse> {
-        return withContext(Dispatchers.IO) {
-            try {
+        return try {
                 // Call the API
                 val response = foodApi.signIn(request)
                 // Return a success result
@@ -87,11 +83,9 @@ class AuthRepositoryImpl @Inject constructor(
                 )
             }
         }
-    }
 
     override suspend fun oAuth(request: OAuthRequest): Resource<AuthResponse> {
-        return withContext(Dispatchers.IO) {
-            try {
+        return try {
                 // Call the API
                 val response = foodApi.oAuth(request)
                 // Return a success result
@@ -124,4 +118,3 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }
     }
-}

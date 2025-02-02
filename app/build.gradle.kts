@@ -74,7 +74,7 @@ dependencies {
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     //facebook auth
-//    implementation ("com.facebook.android:facebook-login:17.0.0")
+    implementation ("com.facebook.android:facebook-login:17.0.0")
 
     implementation("io.coil-kt.coil3:coil-compose:3.0.4")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")

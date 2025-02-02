@@ -20,7 +20,7 @@ fun SignInOptionButton(
     onClick: () -> Unit,
     elevation: Dp = 0.dp,
     image: Int,
-    text: Int
+    text: Int,
 ) {
     Button(
         onClick = onClick,

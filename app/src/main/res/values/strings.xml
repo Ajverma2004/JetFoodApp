@@ -11,4 +11,8 @@
     <string name="full_name">Full Name</string>
     <string name="sign_up">Sign Up</string>
     <string name="login">Login</string>
+    <string name="facebook_app_id">1290852782136236</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">9d4684ffeb1dc60c591bcf5d2ca15e01</string>
+    <string name="ok">OK</string>
 </resources>

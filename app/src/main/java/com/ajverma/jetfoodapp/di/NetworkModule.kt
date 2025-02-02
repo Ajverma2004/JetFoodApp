@@ -1,9 +1,12 @@
 package com.ajverma.jetfoodapp.di
 
+import android.content.Context
 import com.ajverma.jetfoodapp.data.network.FoodApi
+import com.ajverma.jetfoodapp.data.network.auth.JetFoodSession
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -47,5 +50,11 @@ object NetworkModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): FoodApi {
         return retrofit.create(FoodApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSession(@ApplicationContext context: Context): JetFoodSession {
+        return JetFoodSession(context)
     }
 }

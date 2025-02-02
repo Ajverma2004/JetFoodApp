@@ -1,10 +1,8 @@
 package com.ajverma.jetfoodapp.presentation.screens.auth.authScreen
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.ajverma.jetfoodapp.data.network.models.authModels.SignInRequest
+import com.ajverma.jetfoodapp.data.network.auth.JetFoodSession
 import com.ajverma.jetfoodapp.domain.repositories.AuthRepository
-import com.ajverma.jetfoodapp.domain.utils.Resource
 import com.ajverma.jetfoodapp.presentation.screens.auth.BaseAuthViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,8 +13,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthScreenViewModel @Inject constructor(
+class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    private val session: JetFoodSession
 ) : BaseAuthViewModel(authRepository) {
 
     private val _uiState = MutableStateFlow<AuthEvent>(AuthEvent.Nothing)
@@ -41,40 +40,11 @@ class AuthScreenViewModel @Inject constructor(
         _email.value = email
     }
 
-    fun onSignInClick() {
-        viewModelScope.launch {
-            _uiState.value = AuthEvent.Loading
-
-            val response = authRepository.signIn(
-                SignInRequest(
-                    email = _email.value,
-                    password = _password.value
-                )
-            )
-            when(response){
-                is Resource.Success -> {
-                    _uiState.value = AuthEvent.Success
-                    _navigationEvent.emit(AuthNavigationEvent.NavigateToHome)
-                }
-                is Resource.Error -> {
-                    _uiState.value = AuthEvent.Error(response.message)
-                    Log.e("SignUpViewModel", "Error: ${response.message}")
-                }
-            }
-        }
-    }
-
-
-    fun onSignupClick(){
-        viewModelScope.launch {
-            _navigationEvent.emit(AuthNavigationEvent.NavigateToLogin)
-        }
-    }
-
 
     sealed class AuthNavigationEvent{
         data object NavigateToLogin: AuthNavigationEvent()
         data object NavigateToHome: AuthNavigationEvent()
+        data object ShowDialog: AuthNavigationEvent()
     }
 
     sealed class AuthEvent{
@@ -92,18 +62,23 @@ class AuthScreenViewModel @Inject constructor(
 
     override fun onGoogleError(message: String) {
         viewModelScope.launch {
+            error = "Google Sign In Failed"
             _uiState.value = AuthEvent.Error(message)
+            _navigationEvent.emit(AuthNavigationEvent.ShowDialog)
         }
     }
 
     override fun onFacebookError(message: String) {
         viewModelScope.launch {
+            error = "Facebook Sign In Failed"
             _uiState.value = AuthEvent.Error(message)
+            _navigationEvent.emit(AuthNavigationEvent.ShowDialog)
         }
     }
 
     override fun onSocialLoginSuccess(token: String) {
         viewModelScope.launch {
+            session.saveToken(token)
             _uiState.value = AuthEvent.Success
             _navigationEvent.emit(AuthNavigationEvent.NavigateToHome)
         }

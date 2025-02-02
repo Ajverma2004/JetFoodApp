@@ -1,8 +1,10 @@
 package com.ajverma.jetfoodapp.presentation.screens.auth.signup
 
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ajverma.jetfoodapp.data.network.auth.JetFoodSession
 import com.ajverma.jetfoodapp.data.network.models.authModels.SignUpRequest
 import com.ajverma.jetfoodapp.domain.repositories.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,12 +15,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.ajverma.jetfoodapp.domain.utils.Resource
+import com.ajverma.jetfoodapp.presentation.screens.auth.BaseAuthViewModel
+import com.ajverma.jetfoodapp.presentation.screens.auth.authScreen.AuthViewModel.AuthEvent
+import com.ajverma.jetfoodapp.presentation.screens.auth.login.SignInViewModel.SignInEvent
+import com.ajverma.jetfoodapp.presentation.screens.auth.login.SignInViewModel.SignInNavigationEvent
 import kotlinx.coroutines.delay
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val authRepository: AuthRepository
-) : ViewModel() {
+    private val authRepository: AuthRepository,
+    private val session: JetFoodSession
+) : BaseAuthViewModel(authRepository) {
 
     private val _uiState = MutableStateFlow<SignupEvent>(SignupEvent.Nothing)
     val uiState = _uiState.asStateFlow()
@@ -60,11 +67,13 @@ class SignUpViewModel @Inject constructor(
             )
             when(response){
                 is Resource.Success -> {
-                    delay(2000)
+                    session.saveToken(response.data.token)
                     _uiState.value = SignupEvent.Success
                     _navigationEvent.emit(SignupNavigationEvent.NavigateToHome)
                 }
                 is Resource.Error -> {
+                    error = "Sign Up Failed"
+                    _navigationEvent.emit(SignupNavigationEvent.ShowDialog)
                     _uiState.value = SignupEvent.Error(response.message)
                     Log.e("SignUpViewModel", "Error: ${response.message}")
                 }
@@ -72,10 +81,17 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    fun onLoginClick() {
+        viewModelScope.launch {
+            _navigationEvent.emit(SignupNavigationEvent.NavigateToLogin)
+        }
+    }
+
 
     sealed class SignupNavigationEvent{
         data object NavigateToLogin: SignupNavigationEvent()
         data object NavigateToHome: SignupNavigationEvent()
+        data object ShowDialog: SignupNavigationEvent()
     }
 
     sealed class SignupEvent{
@@ -83,5 +99,36 @@ class SignUpViewModel @Inject constructor(
         data object Success: SignupEvent()
         data class Error(val message: String?): SignupEvent()
         data object Loading: SignupEvent()
+    }
+
+
+    override fun loading() {
+        viewModelScope.launch {
+            _uiState.value = SignupEvent.Loading
+        }
+    }
+
+    override fun onGoogleError(message: String) {
+        viewModelScope.launch {
+            error = "Google Sign In Failed"
+            _navigationEvent.emit(SignupNavigationEvent.ShowDialog)
+            _uiState.value = SignupEvent.Error(message)
+        }
+    }
+
+    override fun onFacebookError(message: String) {
+        viewModelScope.launch {
+            error = "Facebook Sign In Failed"
+            _navigationEvent.emit(SignupNavigationEvent.ShowDialog)
+            _uiState.value = SignupEvent.Error(message)
+        }
+    }
+
+    override fun onSocialLoginSuccess(token: String) {
+        viewModelScope.launch {
+            session.saveToken(token)
+            _uiState.value = SignupEvent.Success
+            _navigationEvent.emit(SignupNavigationEvent.NavigateToHome)
+        }
     }
 }

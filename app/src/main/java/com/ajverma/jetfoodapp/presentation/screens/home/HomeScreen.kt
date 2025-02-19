@@ -1,5 +1,12 @@
 package com.ajverma.jetfoodapp.presentation.screens.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -45,6 +52,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -64,6 +72,7 @@ import com.ajverma.jetfoodapp.ui.theme.Typography
 import com.ajverma.jetfoodapp.ui.theme.golden
 import kotlinx.coroutines.flow.collectLatest
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.HomeScreen(
@@ -73,9 +82,20 @@ fun SharedTransitionScope.HomeScreen(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
 
+
+
     val uiState = viewModel.uiState.collectAsState()
     val categories = viewModel.categories.collectAsState()
     val restaurants = viewModel.restaurants.collectAsState()
+
+    NotificationPermissionRequest(
+        onPermissionGranted = {
+
+        },
+        onPermissionDenied = {
+
+        }
+    )
 
 
     LaunchedEffect(Unit){
@@ -347,6 +367,7 @@ fun CategoryItem(
             .padding(4.dp)
             .height(120.dp)
             .width(80.dp)
+            .clip(RoundedCornerShape(45.dp))
             .clickable {
                 onCategoryClick(category)
             }
@@ -392,4 +413,34 @@ fun CategoryItem(
             textAlign = TextAlign.Center
         )
     }
+}
+
+
+@Composable
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+fun NotificationPermissionRequest(onPermissionGranted: () -> Unit, onPermissionDenied: () -> Unit){
+    val context = LocalContext.current
+    if (
+        (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
+    ) {
+        onPermissionGranted()
+        return
+    }
+
+    val permissions = arrayOf(
+        Manifest.permission.POST_NOTIFICATIONS
+    )
+
+    val permissionLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { result ->
+        if (result) {
+            onPermissionGranted()
+        } else {
+            onPermissionDenied()
+        }
+
+    }
+    LaunchedEffect(Unit) {
+        permissionLauncher.launch(permissions[0])
+    }
+
 }

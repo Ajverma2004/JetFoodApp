@@ -1,4 +1,8 @@
 package com.ajverma.jetfoodapp.data.network.models.restaurantModels.cart
 
-class CheckoutDetails {
-}
+data class CheckoutDetails(
+    val deliveryFee: Double,
+    val subTotal: Double,
+    val tax: Double,
+    val totalAmount: Double
+)

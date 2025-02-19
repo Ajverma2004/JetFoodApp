@@ -54,6 +54,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.ajverma.jetfoodapp.R
 import com.ajverma.jetfoodapp.data.network.models.restaurantModels.foodItems.FoodItem
+import com.ajverma.jetfoodapp.presentation.screens.navigation.FoodItemDetails
 import com.ajverma.jetfoodapp.presentation.utils.widgets.gridItems
 import com.ajverma.jetfoodapp.ui.theme.Orange
 import com.ajverma.jetfoodapp.ui.theme.golden
@@ -114,7 +115,13 @@ fun SharedTransitionScope.RestaurantScreen(
                 val foodItems = (uiState.value as RestaurantViewModel.RestaurantState.Success).foodItems
                 if (foodItems.isNotEmpty()) {
                     gridItems(foodItems, 2) { foodItem ->
-                        FoodItemView(footItem = foodItem, onClick = {})
+                        FoodItemView(foodItem = foodItem, onClick = {
+                            navController.navigate(FoodItemDetails(
+                                foodItem = foodItem
+                            ))
+                        },
+                            animatedVisibilityScope = animatedVisibilityScope
+                        )
                     }
                 } else {
                     item {
@@ -203,7 +210,7 @@ fun SharedTransitionScope.RestaurantDetails(
 
 
 @Composable
-private fun SharedTransitionScope.RestaurantHeader(
+fun SharedTransitionScope.RestaurantHeader(
     modifier: Modifier = Modifier,
     imageUrl: String,
     restaurantId: String,
@@ -219,6 +226,7 @@ private fun SharedTransitionScope.RestaurantHeader(
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
+                .height(300.dp)
                 .padding(16.dp)
                 .clip(RoundedCornerShape(30.dp))
                 .sharedElement(
@@ -253,9 +261,10 @@ private fun SharedTransitionScope.RestaurantHeader(
 }
 
 @Composable
-fun FoodItemView(
-    footItem: FoodItem,
-    onClick: (FoodItem) -> Unit
+fun SharedTransitionScope.FoodItemView(
+    foodItem: FoodItem,
+    onClick: (FoodItem) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     Column(
         modifier = Modifier
@@ -269,7 +278,7 @@ fun FoodItemView(
                 spotColor = Color.Gray.copy(alpha = 0.8f)
             )
             .background(Color.White)
-            .clickable { onClick.invoke(footItem) }
+            .clickable { onClick.invoke(foodItem) }
             .clip(RoundedCornerShape(16.dp))
     ) {
         Box(
@@ -278,10 +287,14 @@ fun FoodItemView(
                 .height(147.dp)
         ) {
             AsyncImage(
-                model = footItem.imageUrl, contentDescription = null,
+                model = foodItem.imageUrl, contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
                     .clip(RoundedCornerShape(16.dp))
+                    .sharedElement(
+                        state = rememberSharedContentState(key = "image/${foodItem.id}"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
                     ,
                 contentScale = ContentScale.Crop,
             )
@@ -291,7 +304,7 @@ fun FoodItemView(
                         append("$")
                     }
                     withStyle(style = SpanStyle(color = Color.Black, fontWeight = FontWeight.Bold)) { // Color for price
-                        append(footItem.price.toString())
+                        append(foodItem.price.toString())
                     }
                 },
                 style = MaterialTheme.typography.bodyMedium,
@@ -301,6 +314,10 @@ fun FoodItemView(
                     .background(Color.White)
                     .padding(vertical = 8.dp, horizontal = 8.dp)
                     .align(Alignment.TopStart)
+                    .sharedElement(
+                        state = rememberSharedContentState(key = "price/${foodItem.id}"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    )
             )
 
             Image(
@@ -352,10 +369,14 @@ fun FoodItemView(
                 .fillMaxWidth()
         ) {
             Text(
-                text = footItem.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1,
+                text = foodItem.name, style = MaterialTheme.typography.bodyMedium, maxLines = 1,
+                modifier = Modifier.sharedElement(
+                    state = rememberSharedContentState(key = "name/${foodItem.id}"),
+                    animatedVisibilityScope = animatedVisibilityScope
+                )
             )
             Text(
-                text = footItem.description,
+                text = foodItem.description,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray,
                 maxLines = 1

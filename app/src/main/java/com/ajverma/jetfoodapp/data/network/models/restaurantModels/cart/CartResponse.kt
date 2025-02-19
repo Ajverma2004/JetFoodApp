@@ -1,4 +1,6 @@
 package com.ajverma.jetfoodapp.data.network.models.restaurantModels.cart
 
-class CartResponse {
-}
+data class CartResponse(
+    val checkoutDetails: CheckoutDetails,
+    val items: List<CartItem>
+)

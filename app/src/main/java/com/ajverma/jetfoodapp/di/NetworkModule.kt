@@ -1,8 +1,11 @@
 package com.ajverma.jetfoodapp.di
 
 import android.content.Context
+import android.util.Log
 import com.ajverma.jetfoodapp.data.network.FoodApi
 import com.ajverma.jetfoodapp.data.network.auth.JetFoodSession
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +21,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "http://10.0.2.2:8080/"
+    private const val BASE_URL = "http://192.168.0.32:8080/"
+//    private const val BASE_URL = "http://10.0.2.16:8080/"
 
     @Provides
     @Singleton
@@ -30,9 +34,38 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor): OkHttpClient {
+    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor, session: JetFoodSession): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(loggingInterceptor) // Add the logging interceptor
+            .addInterceptor(loggingInterceptor)
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val token = session.getToken()
+                
+                Log.d("NetworkModule", "Adding token to request: $token")
+                
+                val request = if (!token.isNullOrEmpty()) {
+                    val newRequest = original.newBuilder()
+                        .header("Authorization", "Bearer $token")
+                        .method(original.method, original.body)
+                        .build()
+                    
+                    // Log the full request headers for debugging
+                    Log.d("NetworkModule", "Request URL: ${newRequest.url}")
+                    Log.d("NetworkModule", "Authorization Header: ${newRequest.header("Authorization")}")
+
+                    
+                    newRequest
+                } else {
+                    Log.w("NetworkModule", "No token available for request to: ${original.url}")
+                    original
+                }
+                
+                // Execute the request and log the response
+                val response = chain.proceed(request)
+                Log.d("NetworkModule", "Response Code: ${response.code}")
+                Log.d("NetworkModule", "Response Message: ${response.message}")
+                response
+            }
             .build()
     }
 
@@ -56,5 +89,10 @@ object NetworkModule {
     @Singleton
     fun provideSession(@ApplicationContext context: Context): JetFoodSession {
         return JetFoodSession(context)
+    }
+
+    @Provides
+    fun provideLocationService(@ApplicationContext context: Context): FusedLocationProviderClient{
+        return LocationServices.getFusedLocationProviderClient(context)
     }
 }

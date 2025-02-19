@@ -10,26 +10,42 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.ajverma.jetfoodapp.data.network.auth.JetFoodSession
+import com.ajverma.jetfoodapp.data.network.models.restaurantModels.foodItems.FoodItem
+import com.ajverma.jetfoodapp.presentation.screens.add_address.AddAddressScreen
+import com.ajverma.jetfoodapp.presentation.screens.address_list.AddressListScreen
 import com.ajverma.jetfoodapp.presentation.screens.auth.authScreen.AuthScreen
 import com.ajverma.jetfoodapp.presentation.screens.auth.login.SignInScreen
 import com.ajverma.jetfoodapp.presentation.screens.auth.signup.SignUpScreen
+import com.ajverma.jetfoodapp.presentation.screens.cart.CartScreen
+import com.ajverma.jetfoodapp.presentation.screens.cart.CartViewModel
+import com.ajverma.jetfoodapp.presentation.screens.food_item.FoodItemScreen
 import com.ajverma.jetfoodapp.presentation.screens.home.HomeScreen
+import com.ajverma.jetfoodapp.presentation.screens.notifications.NotificationsScreen
+import com.ajverma.jetfoodapp.presentation.screens.notifications.NotificationsViewModel
+import com.ajverma.jetfoodapp.presentation.screens.order.OrderListScreen
+import com.ajverma.jetfoodapp.presentation.screens.order_detiails.OrderDetailsScreen
+import com.ajverma.jetfoodapp.presentation.screens.order_status.OrderSuccess
 import com.ajverma.jetfoodapp.presentation.screens.restaurant.RestaurantScreen
+import kotlin.reflect.typeOf
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Navigation(
     modifier: Modifier = Modifier,
+    navController: NavHostController,
+    onScreenChanged: (Boolean) -> Unit,
+    notificationsViewModel: NotificationsViewModel,
+    cartViewModel: CartViewModel
 ) {
-    val navController = rememberNavController()
     val session = JetFoodSession(LocalContext.current)
 
     SharedTransitionLayout {
@@ -62,16 +78,19 @@ fun Navigation(
             }
         ) {
             composable<SignUp> {
+                onScreenChanged(false)
                 SignUpScreen(
                     navController = navController
                 )
             }
             composable<Login> {
+                onScreenChanged(false)
                 SignInScreen(
                     navController = navController,
                 )
             }
             composable<Home> {
+                onScreenChanged(true)
                 HomeScreen(
                     navController = navController,
                     animatedVisibilityScope = this
@@ -79,12 +98,14 @@ fun Navigation(
             }
 
             composable<AuthOption> {
+                onScreenChanged(false)
                 AuthScreen(
                     navController = navController
                 )
             }
 
             composable<RestaurantDetails>{
+                onScreenChanged(false)
                 val route = it.toRoute<RestaurantDetails>()
                 RestaurantScreen(
                     navController = navController,
@@ -95,7 +116,68 @@ fun Navigation(
                 )
             }
 
+            composable<FoodItemDetails>(
+                typeMap = mapOf(typeOf<FoodItem>() to foodItemNavType)
+            ){
+                onScreenChanged(false)
+                val route = it.toRoute<FoodItemDetails>()
+                FoodItemScreen(
+                    foodItem = route.foodItem,
+                    navController = navController,
+                    animatedVisibilityScope = this,
+                    onItemAdded = {
+                        cartViewModel.getCart()
+                    }
+                )
+            }
 
+            composable<Cart>{
+                onScreenChanged(true)
+                CartScreen(navController = navController, viewModel = cartViewModel)
+            }
+
+            composable<Notification>{
+                SideEffect {
+                    onScreenChanged(true)
+                }
+                NotificationsScreen(navController = navController, viewModel = notificationsViewModel)
+            }
+
+            composable<AddressList> {
+                onScreenChanged(false)
+                AddressListScreen(navController = navController)
+            }
+
+            composable<AddAddress> {
+                onScreenChanged(false)
+                AddAddressScreen(navController = navController)
+            }
+
+            composable<OrderStatus> {
+                onScreenChanged(false)
+                val orderId = it.toRoute<OrderStatus>().orderId
+                OrderSuccess(navController = navController, orderId = orderId)
+            }
+
+            composable<OrderList> {
+                onScreenChanged(true)
+                OrderListScreen(
+                    navController = navController,
+                    animatedVisibilityScope = this
+                )
+            }
+
+            composable<OrderDetails> {
+                SideEffect {
+                    onScreenChanged(false)
+                }
+                val orderId = it.toRoute<OrderDetails>().orderId
+                OrderDetailsScreen(
+                    orderId = orderId,
+                    navController = navController,
+                    animatedVisibilityScope = this
+                )
+            }
         }
     }
 }

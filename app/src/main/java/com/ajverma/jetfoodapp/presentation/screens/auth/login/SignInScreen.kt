@@ -67,6 +67,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignInScreen(
     modifier: Modifier = Modifier,
+    isCostumer: Boolean = true,
     viewModel: SignInViewModel = hiltViewModel(),
     navController: NavController,
 ) {
@@ -220,54 +221,58 @@ fun SignInScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                // Already have an account text
-                AlreadyHaveAnAccountText(
-                    initialText = "Don't have an account? ",
-                    trailingText = "Sign Up",
-                    initialTextColor = Color.Black,
-                    trailingTextColor = Orange,
-                    onClick = {
-                        viewModel.onSignupClick()
+                if (isCostumer) {
+                    // Already have an account text
+                    AlreadyHaveAnAccountText(
+                        initialText = "Don't have an account? ",
+                        trailingText = "Sign Up",
+                        initialTextColor = Color.Black,
+                        trailingTextColor = Orange,
+                        onClick = {
+                            viewModel.onSignupClick()
+                        }
+                    )
+
+                    Spacer(Modifier.height(26.dp))
+
+                    // Sign in with line
+                    SignInTextWithLine(
+                        text = "Sign In With",
+                        textColor = Color.Black,
+                        lineWidth = 80.dp
+                    )
+
+                    // Google and Facebook buttons
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SignInOptionButton(
+                            onClick = {
+                                viewModel.onGoogleClick(context as ComponentActivity)
+                            },
+                            elevation = 7.dp,
+                            image = R.drawable.ic_google,
+                            text = R.string.google
+                        )
+
+                        SignInOptionButton(
+                            onClick = {
+                                viewModel.onFacebookClick(context as ComponentActivity)
+                            },
+                            elevation = 7.dp,
+                            image = R.drawable.ic_facebook,
+                            text = R.string.facebook
+                        )
                     }
-                )
-
-                Spacer(Modifier.height(26.dp))
-
-                // Sign in with line
-                SignInTextWithLine(
-                    text = "Sign In With",
-                    textColor = Color.Black,
-                    lineWidth = 80.dp
-                )
-
-                // Google and Facebook buttons
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    SignInOptionButton(
-                        onClick = {
-                            viewModel.onGoogleClick(context as ComponentActivity)
-                        },
-                        elevation = 7.dp,
-                        image = R.drawable.ic_google,
-                        text = R.string.google
-                    )
-
-                    SignInOptionButton(
-                        onClick = {
-                            viewModel.onFacebookClick(context as ComponentActivity)
-                        },
-                        elevation = 7.dp,
-                        image = R.drawable.ic_facebook,
-                        text = R.string.facebook
-                    )
                 }
             }
+
         }
+
 
 
         if (showDialog){

@@ -60,6 +60,7 @@ import kotlinx.coroutines.launch
 fun AuthScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel(),
+    isCostumer: Boolean = true,
     navController: NavController
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -210,63 +211,65 @@ fun AuthScreen(
                    horizontalAlignment = Alignment.CenterHorizontally,
                    verticalArrangement = Arrangement.Top
                ) {
-                   //sign in with line
-                   SignInTextWithLine(
-                       text = "Sign In With",
-                       lineWidth = 80.dp
-                   )
+                  if (isCostumer){
+                      //sign in with line
+                      SignInTextWithLine(
+                          text = "Sign In With",
+                          lineWidth = 80.dp
+                      )
 
 
-                   // google and facebook buttons
-                   Row(
-                       modifier = Modifier.fillMaxWidth()
-                           .padding(top = 16.dp),
-                       horizontalArrangement = Arrangement.SpaceEvenly,
-                       verticalAlignment = Alignment.CenterVertically
-                   ) {
-                       //google button
-                       SignInOptionButton(
-                           onClick = {
-                               viewModel.onGoogleClick(context as ComponentActivity)
-                           },
-                           image = R.drawable.ic_google,
-                           text = R.string.google
-                       )
+                      // google and facebook buttons
+                      Row(
+                          modifier = Modifier.fillMaxWidth()
+                              .padding(top = 16.dp),
+                          horizontalArrangement = Arrangement.SpaceEvenly,
+                          verticalAlignment = Alignment.CenterVertically
+                      ) {
+                          //google button
+                          SignInOptionButton(
+                              onClick = {
+                                  viewModel.onGoogleClick(context as ComponentActivity)
+                              },
+                              image = R.drawable.ic_google,
+                              text = R.string.google
+                          )
 
-                       //facebook button
-                       SignInOptionButton(
-                           onClick = {
-                               viewModel.onFacebookClick(context as ComponentActivity)
-                           },
-                           image = R.drawable.ic_facebook,
-                           text = R.string.facebook
-                       )
+                          //facebook button
+                          SignInOptionButton(
+                              onClick = {
+                                  viewModel.onFacebookClick(context as ComponentActivity)
+                              },
+                              image = R.drawable.ic_facebook,
+                              text = R.string.facebook
+                          )
 
 
-                   }
+                      }
 
-                   //sign in with email or button
+                      //sign in with email or button
 
-                   Button(
-                       onClick = {
-                           navController.navigate(SignUp)
-                       },
-                       colors = ButtonDefaults.buttonColors(
-                           containerColor = Color.White.copy(alpha = 0.2f)
-                       ),
-                       border = BorderStroke(1.dp, Color.White),
-                       modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
-                           .fillMaxWidth()
-                       ,
+                      Button(
+                          onClick = {
+                              navController.navigate(SignUp)
+                          },
+                          colors = ButtonDefaults.buttonColors(
+                              containerColor = Color.White.copy(alpha = 0.2f)
+                          ),
+                          border = BorderStroke(1.dp, Color.White),
+                          modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp)
+                              .fillMaxWidth()
+                          ,
 
-                       ) {
-                       Text(
-                           "Start with email",
-                           color = Color.White,
-                           fontSize = 16.sp,
-                           modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
-                       )
-                   }
+                          ) {
+                          Text(
+                              "Start with email",
+                              color = Color.White,
+                              fontSize = 16.sp,
+                              modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp)
+                          )
+                      }
+                  }
 
 
                    // already have an account text

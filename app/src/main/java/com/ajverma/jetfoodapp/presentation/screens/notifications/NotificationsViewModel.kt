@@ -78,7 +78,6 @@ class NotificationsViewModel @Inject constructor(
         }
     }
 
-    // Add this method to handle new notifications
     fun addNewNotification(notification: Notification) {
         val currentNotifications = (_state.value as? NotificationState.Success)?.data ?: emptyList()
         val updatedNotifications = listOf(notification) + currentNotifications

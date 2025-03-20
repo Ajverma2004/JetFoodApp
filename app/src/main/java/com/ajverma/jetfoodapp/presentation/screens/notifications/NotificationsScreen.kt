@@ -52,7 +52,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.jetfoodapp.R
 import com.ajverma.jetfoodapp.data.network.models.notificationModels.Notification
-import com.ajverma.jetfoodapp.presentation.screens.home.NotificationPermissionRequest
 import com.ajverma.jetfoodapp.presentation.screens.navigation.OrderDetails
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.collectLatest

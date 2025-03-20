@@ -79,7 +79,7 @@ class FoodNotificationManager @Inject constructor(
         }
     }
 
-    @SuppressLint("MissingPermission")
+
     fun showNotification(
         title: String,
         message: String,
@@ -90,12 +90,16 @@ class FoodNotificationManager @Inject constructor(
         val notification = NotificationCompat.Builder(context, notificationChannelType.channelId)
             .setContentTitle(title)
             .setContentText(message)
-            .setSmallIcon(android.R.drawable.ic_media_pause)
+            .setSmallIcon(android.R.drawable.ic_notification_overlay)
             .setAutoCancel(true)
             .setContentIntent(intent)
             .build()
 
-        notificationManager.notify(notificationId, notification)
+        if (
+            context.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationManager.notify(notificationId, notification)
+        }
 
     }
 

@@ -51,7 +51,7 @@ import com.ajverma.jetfoodapp.presentation.screens.navigation.Home
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Login
 import com.ajverma.jetfoodapp.presentation.screens.navigation.SignUp
 import com.ajverma.jetfoodapp.presentation.utils.components.BasicDialog
-import com.ajverma.jetfoodapp.ui.theme.Orange
+import com.ajverma.jetfoodapp.ui.theme.primary
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -151,11 +151,11 @@ fun AuthScreen(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
             ),
-            border = BorderStroke(1.dp, Orange)
+            border = BorderStroke(1.dp, primary)
         ) {
             Text(
                 stringResource(R.string.skip),
-                color = Orange,
+                color = primary,
                 fontSize = 16.sp
             )
         }
@@ -178,7 +178,7 @@ fun AuthScreen(
             )
             Text(
                 stringResource(R.string.jetfood),
-                color = Orange,
+                color = primary,
                 fontSize = 52.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(start = 16.dp),

@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ajverma.jetfoodapp.R
-import com.ajverma.jetfoodapp.ui.theme.Orange
+import com.ajverma.jetfoodapp.ui.theme.primary
 
 @Composable
 fun BasicDialog(
@@ -50,7 +50,7 @@ fun BasicDialog(
             onClick = onClick,
             modifier = Modifier.align(Alignment.End),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Orange
+                containerColor = primary
             ),
             elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 4.dp

@@ -2,14 +2,10 @@ package com.ajverma.jetfoodapp.data.notification
 
 import android.app.PendingIntent
 import android.content.Intent
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ajverma.jetfoodapp.MainActivity
-import com.ajverma.jetfoodapp.data.network.models.notificationModels.Notification
-import com.ajverma.jetfoodapp.presentation.screens.notifications.NotificationsViewModel
+import com.ajverma.jetfoodapp.presentation.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint

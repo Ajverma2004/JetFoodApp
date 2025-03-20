@@ -8,6 +8,7 @@ import com.ajverma.jetfoodapp.data.respository.HomeRepositoryImpl
 import com.ajverma.jetfoodapp.data.respository.NotificationRepositoryImpl
 import com.ajverma.jetfoodapp.data.respository.OrderRepositoryImpl
 import com.ajverma.jetfoodapp.data.respository.RestaurantRepositoryImpl
+import com.ajverma.jetfoodapp.data.respository.restaurant.RestaurantProfileRepositoryImpl
 import com.ajverma.jetfoodapp.domain.repositories.AddressListRepository
 import com.ajverma.jetfoodapp.domain.repositories.AuthRepository
 import com.ajverma.jetfoodapp.domain.repositories.CartRepository
@@ -16,6 +17,7 @@ import com.ajverma.jetfoodapp.domain.repositories.HomeRepository
 import com.ajverma.jetfoodapp.domain.repositories.NotificationRepository
 import com.ajverma.jetfoodapp.domain.repositories.OrderRepository
 import com.ajverma.jetfoodapp.domain.repositories.RestaurantRepository
+import com.ajverma.jetfoodapp.domain.repositories.restaurant.RestaurantProfileRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -74,6 +76,12 @@ abstract class RepositoryModule {
     abstract fun bindNotificationRepository(
         notificationRepositoryImpl: NotificationRepositoryImpl
     ): NotificationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRestaurantProfileRepository(
+        restaurantProfileRepositoryImpl: RestaurantProfileRepositoryImpl
+    ): RestaurantProfileRepository
 
 
 }

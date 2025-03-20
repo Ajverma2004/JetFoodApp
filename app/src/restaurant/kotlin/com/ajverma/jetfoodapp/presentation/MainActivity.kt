@@ -1,4 +1,4 @@
-package com.ajverma.jetfoodapp
+package com.ajverma.jetfoodapp.presentation
 
 import android.animation.ObjectAnimator
 import android.os.Build
@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ajverma.jetfoodapp.R
 import com.ajverma.jetfoodapp.presentation.screens.navigation.NavRoutes
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Notification
 import com.ajverma.jetfoodapp.presentation.screens.notifications.NotificationsViewModel
@@ -171,10 +172,18 @@ class MainActivity : ComponentActivity() {
     }
 
     sealed class BottomNavItem(val route: NavRoutes, val icon: Int){
-        data object Home: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.Home, R.drawable.ic_home)
-        data object Cart: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.Cart, R.drawable.cart)
-        data object Notification: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.Notification, R.drawable.ic_notification)
-        data object OrderList: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.OrderList, R.drawable.ic_orders)
+        data object Home: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.Home,
+            R.drawable.ic_home
+        )
+        data object Cart: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.Cart,
+            R.drawable.cart
+        )
+        data object Notification: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.Notification,
+            R.drawable.ic_notification
+        )
+        data object OrderList: BottomNavItem(com.ajverma.jetfoodapp.presentation.screens.navigation.OrderList,
+            R.drawable.ic_orders
+        )
     }
 }
 

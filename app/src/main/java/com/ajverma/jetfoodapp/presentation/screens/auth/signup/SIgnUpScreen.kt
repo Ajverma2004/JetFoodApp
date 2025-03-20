@@ -50,7 +50,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.ajverma.jetfoodapp.R
-import com.ajverma.jetfoodapp.presentation.screens.auth.BaseAuthViewModel
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.AlreadyHaveAnAccountText
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInOptionButton
 import com.ajverma.jetfoodapp.presentation.screens.auth.components.SignInTextWithLine
@@ -59,7 +58,7 @@ import com.ajverma.jetfoodapp.presentation.screens.navigation.Home
 import com.ajverma.jetfoodapp.presentation.screens.navigation.Login
 import com.ajverma.jetfoodapp.presentation.utils.components.BasicDialog
 import com.ajverma.jetfoodapp.presentation.utils.components.JetFoodTextField
-import com.ajverma.jetfoodapp.ui.theme.Orange
+import com.ajverma.jetfoodapp.ui.theme.primary
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -194,7 +193,7 @@ fun SignUpScreen(
             Button(
                 onClick = viewModel::onSignUpClick,
                 modifier = Modifier.size(250.dp, 70.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Orange),
+                colors = ButtonDefaults.buttonColors(containerColor = primary),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 10.dp)
             ) {
                 Box{
@@ -234,7 +233,7 @@ fun SignUpScreen(
                 AlreadyHaveAnAccountText(
                     trailingText = "Login",
                     initialTextColor = Color.Black,
-                    trailingTextColor = Orange,
+                    trailingTextColor = primary,
                     onClick = {
                         viewModel.onLoginClick()
                     }

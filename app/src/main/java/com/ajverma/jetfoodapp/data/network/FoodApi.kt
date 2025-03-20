@@ -22,6 +22,7 @@ import com.ajverma.jetfoodapp.data.network.models.restaurantModels.payments.Conf
 import com.ajverma.jetfoodapp.data.network.models.restaurantModels.payments.ConfirmPaymentResponse
 import com.ajverma.jetfoodapp.data.network.models.restaurantModels.payments.PaymentIntentRequest
 import com.ajverma.jetfoodapp.data.network.models.restaurantModels.payments.PaymentIntentResponse
+import com.ajverma.jetfoodapp.data.network.models.restaurantModels.restaurants.Restaurant
 import com.ajverma.jetfoodapp.data.network.models.restaurantModels.restaurants.RestaurantResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -103,6 +104,12 @@ interface FoodApi {
 
     @POST("auth/oauth")
     suspend fun oAuth(@Body request: OAuthRequest): AuthResponse
+
+
+    //restaurant calls
+
+    @GET("restaurant-owner/profile")
+    suspend fun getRestaurantProfile(): Restaurant
 
 
 }

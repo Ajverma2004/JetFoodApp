@@ -23,7 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.ajverma.jetfoodapp.ui.theme.Orange
+import com.ajverma.jetfoodapp.ui.theme.primary
 
 @Composable
 fun JetFoodTextField(
@@ -50,7 +50,7 @@ fun JetFoodTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = RoundedCornerShape(10.dp),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors().copy(
-        focusedIndicatorColor = Orange,
+        focusedIndicatorColor = primary,
         unfocusedIndicatorColor = Color.LightGray.copy(alpha = 0.4f),
     )
 ) {

@@ -34,7 +34,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor, session: JetFoodSession): OkHttpClient {
+    fun provideOkHttpClient(loggingInterceptor: HttpLoggingInterceptor, session: JetFoodSession, @ApplicationContext context: Context): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor { chain ->
@@ -46,12 +46,15 @@ object NetworkModule {
                 val request = if (!token.isNullOrEmpty()) {
                     val newRequest = original.newBuilder()
                         .header("Authorization", "Bearer $token")
+                        .header("X-Package-Name", context.packageName)
                         .method(original.method, original.body)
                         .build()
                     
                     // Log the full request headers for debugging
                     Log.d("NetworkModule", "Request URL: ${newRequest.url}")
                     Log.d("NetworkModule", "Authorization Header: ${newRequest.header("Authorization")}")
+                    Log.d("NetworkModule", "X-Package-Name Header: ${newRequest.header("X-Package-Name")}")
+                    Log.d("NetworkModule", "Request Method: ${context.packageName}")
 
                     
                     newRequest
